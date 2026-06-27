@@ -62,3 +62,13 @@ variable "private_subnet_cidrs" {
   description = "CIDR ranges of private subnets — used to restrict bastion egress"
   type        = list(string)
 }
+
+variable "ops_alert_email" {
+  description = "Email address for CloudWatch backup-failure alerts"
+  type        = string
+}
+
+variable "github_oidc_provider_arn" {
+  description = "ARN of the GitHub Actions OIDC provider (arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com)"
+  type        = string
+}
