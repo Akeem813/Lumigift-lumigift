@@ -251,47 +251,7 @@ resource "aws_iam_role_policy" "ecs_secrets" {
   })
 }
 
-resource "aws_iam_role" "ecs_task" {
-  name = "lumigift-${var.env}-ecs-task"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = { Service = "ecs-tasks.amazonaws.com" }
-    }]
-  })
-}
-
-# Least-privilege policy: restrict GetSecretValue to specific secret ARNs only
-resource "aws_iam_role_policy" "ecs_task_secrets" {
-  name = "lumigift-${var.env}-ecs-task-secrets"
-  role = aws_iam_role.ecs_task.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "SecretsManagerReadOnly"
-        Effect = "Allow"
-        Action = "secretsmanager:GetSecretValue"
-        Resource = [
-          aws_secretsmanager_secret.db_url.arn,
-          aws_secretsmanager_secret.redis_url.arn,
-          aws_secretsmanager_secret.nextauth_secret.arn,
-          aws_secretsmanager_secret.cron_secret.arn,
-          aws_secretsmanager_secret.paystack_secret_key.arn,
-          aws_secretsmanager_secret.stripe_secret_key.arn,
-          aws_secretsmanager_secret.stripe_webhook_secret.arn,
-          aws_secretsmanager_secret.termii_api_key.arn,
-          aws_secretsmanager_secret.stellar_server_secret_key.arn,
-          aws_secretsmanager_secret.cloudinary_api_secret.arn,
-        ]
-      }
-    ]
-  })
-}
+# ECS task role and least-privilege Secrets Manager policy are defined in iam.tf
 
 # ─── CloudWatch Logs ──────────────────────────────────────────────────────────
 
