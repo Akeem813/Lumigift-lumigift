@@ -62,3 +62,8 @@ variable "private_subnet_cidrs" {
   description = "CIDR ranges of private subnets — used to restrict bastion egress"
   type        = list(string)
 }
+
+variable "acm_certificate_arn" {
+  description = "ACM certificate ARN for CloudFront HTTPS (must be in us-east-1)"
+  type        = string
+}
