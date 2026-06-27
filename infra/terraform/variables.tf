@@ -62,3 +62,15 @@ variable "private_subnet_cidrs" {
   description = "CIDR ranges of private subnets — used to restrict bastion egress"
   type        = list(string)
 }
+
+variable "alarm_email" {
+  description = "Email address to receive CloudWatch alarm notifications. Leave empty to skip subscription."
+  type        = string
+  default     = ""
+}
+
+variable "rds_max_connections" {
+  description = "max_connections for the RDS instance class (used to compute 80% threshold for the connection-count alarm)."
+  type        = number
+  default     = 420
+}
