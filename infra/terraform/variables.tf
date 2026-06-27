@@ -63,7 +63,18 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "acm_certificate_arn" {
-  description = "ACM certificate ARN for CloudFront HTTPS (must be in us-east-1)"
+variable "backup_region" {
+  description = "Secondary AWS region for cross-region S3 backup replication (e.g. us-west-2)"
+  type        = string
+  default     = "us-west-2"
+}
+
+variable "ops_alert_email" {
+  description = "Email address for CloudWatch backup-failure alerts"
+  type        = string
+}
+
+variable "github_oidc_provider_arn" {
+  description = "ARN of the GitHub Actions OIDC provider"
   type        = string
 }
