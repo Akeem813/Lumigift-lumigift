@@ -63,14 +63,18 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "alarm_email" {
-  description = "Email address to receive CloudWatch alarm notifications. Leave empty to skip subscription."
+variable "backup_region" {
+  description = "Secondary AWS region for cross-region S3 backup replication (e.g. us-west-2)"
   type        = string
-  default     = ""
+  default     = "us-west-2"
 }
 
-variable "rds_max_connections" {
-  description = "max_connections for the RDS instance class (used to compute 80% threshold for the connection-count alarm)."
-  type        = number
-  default     = 420
+variable "ops_alert_email" {
+  description = "Email address for CloudWatch backup-failure alerts"
+  type        = string
+}
+
+variable "github_oidc_provider_arn" {
+  description = "ARN of the GitHub Actions OIDC provider"
+  type        = string
 }
