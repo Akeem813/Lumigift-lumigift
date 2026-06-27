@@ -239,7 +239,13 @@ resource "aws_iam_role_policy" "ecs_secrets" {
         aws_secretsmanager_secret.db_url.arn,
         aws_secretsmanager_secret.redis_url.arn,
         aws_secretsmanager_secret.nextauth_secret.arn,
-        aws_secretsmanager_secret.cron_secret.arn
+        aws_secretsmanager_secret.cron_secret.arn,
+        aws_secretsmanager_secret.paystack_secret_key.arn,
+        aws_secretsmanager_secret.stripe_secret_key.arn,
+        aws_secretsmanager_secret.stripe_webhook_secret.arn,
+        aws_secretsmanager_secret.termii_api_key.arn,
+        aws_secretsmanager_secret.stellar_server_secret_key.arn,
+        aws_secretsmanager_secret.cloudinary_api_secret.arn,
       ]
     }]
   })
@@ -255,6 +261,35 @@ resource "aws_iam_role" "ecs_task" {
       Effect = "Allow"
       Principal = { Service = "ecs-tasks.amazonaws.com" }
     }]
+  })
+}
+
+# Least-privilege policy: restrict GetSecretValue to specific secret ARNs only
+resource "aws_iam_role_policy" "ecs_task_secrets" {
+  name = "lumigift-${var.env}-ecs-task-secrets"
+  role = aws_iam_role.ecs_task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "SecretsManagerReadOnly"
+        Effect = "Allow"
+        Action = "secretsmanager:GetSecretValue"
+        Resource = [
+          aws_secretsmanager_secret.db_url.arn,
+          aws_secretsmanager_secret.redis_url.arn,
+          aws_secretsmanager_secret.nextauth_secret.arn,
+          aws_secretsmanager_secret.cron_secret.arn,
+          aws_secretsmanager_secret.paystack_secret_key.arn,
+          aws_secretsmanager_secret.stripe_secret_key.arn,
+          aws_secretsmanager_secret.stripe_webhook_secret.arn,
+          aws_secretsmanager_secret.termii_api_key.arn,
+          aws_secretsmanager_secret.stellar_server_secret_key.arn,
+          aws_secretsmanager_secret.cloudinary_api_secret.arn,
+        ]
+      }
+    ]
   })
 }
 
@@ -379,6 +414,36 @@ resource "aws_secretsmanager_secret" "nextauth_secret" {
 
 resource "aws_secretsmanager_secret" "cron_secret" {
   name = "lumigift/${var.env}/CRON_SECRET"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "paystack_secret_key" {
+  name = "lumigift/${var.env}/PAYSTACK_SECRET_KEY"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "stripe_secret_key" {
+  name = "lumigift/${var.env}/STRIPE_SECRET_KEY"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "stripe_webhook_secret" {
+  name = "lumigift/${var.env}/STRIPE_WEBHOOK_SECRET"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "termii_api_key" {
+  name = "lumigift/${var.env}/TERMII_API_KEY"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "stellar_server_secret_key" {
+  name = "lumigift/${var.env}/STELLAR_SERVER_SECRET_KEY"
+  tags = local.tags
+}
+
+resource "aws_secretsmanager_secret" "cloudinary_api_secret" {
+  name = "lumigift/${var.env}/CLOUDINARY_API_SECRET"
   tags = local.tags
 }
 
