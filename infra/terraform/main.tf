@@ -44,6 +44,8 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot    = var.env != "prod"
   deletion_protection    = var.env == "prod"
   storage_encrypted      = true
+  backup_retention_period = 7               # retain automated snapshots for 7 days
+  multi_az               = var.env == "prod" # synchronous standby in a second AZ
 
   tags = local.tags
 }
