@@ -96,6 +96,27 @@ jobs:
           codedeploy-deployment-group: lumigift-prod
           wait-for-service-stability: true
 
+      - name: Fill in worker task definition placeholders
+        run: |
+          sed -i 's|<AWS_ACCOUNT_ID>|${{ secrets.AWS_ACCOUNT_ID }}|g' taskdef-worker.json
+          sed -i 's|<AWS_REGION>|${{ vars.AWS_REGION }}|g' taskdef-worker.json
+
+      - name: Render Amazon ECS worker task definition
+        id: render-worker-container
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: taskdef-worker.json
+          container-name: worker
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy worker service to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-worker-container.outputs.task-definition }}
+          service: lumigift-worker-prod
+          cluster: lumigift-prod
+          wait-for-service-stability: true
+
       - name: Run smoke tests against production
         id: smoke
         run: npm run e2e -- --grep "@smoke"
